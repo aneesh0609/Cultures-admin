@@ -5,6 +5,8 @@ import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
 import AdminOrders from "./pages/Orders";
+import AdminUsers from "./pages/Customer";
+
 
 function App() {
   return (
@@ -41,6 +43,17 @@ function App() {
             element={
               <ProtectedRoute>
                 <AdminOrders />
+              </ProtectedRoute>
+            }
+          />
+
+
+
+           <Route
+            path="/customers"
+            element={
+              <ProtectedRoute>
+                <AdminUsers />
               </ProtectedRoute>
             }
           />
