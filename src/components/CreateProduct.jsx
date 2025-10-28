@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Upload, PlusCircle, Loader2 } from "lucide-react";
+import { PlusCircle, Loader2, ImagePlus } from "lucide-react";
 import Sidebar from "../components/Sidebar";
-import Navbar from "../components/Navbar";
 
 const CreateProduct = () => {
   const [loading, setLoading] = useState(false);
-  const [previewImages, setPreviewImages] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -14,53 +12,48 @@ const CreateProduct = () => {
     discountPrice: "",
     category: "",
     brand: "Culture's",
-    sizes: [],
-    colors: [],
+    sizes: "",
+    colors: "",
     stock: "",
-    images: [],
+    images: "",
   });
 
-  // 🔹 Handle simple field changes
+  // 🔹 Handle text input
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 🔹 Handle array fields (sizes, colors)
-  const handleArrayChange = (e, field) => {
-    const values = e.target.value.split(",").map((v) => v.trim());
-    setFormData((prev) => ({ ...prev, [field]: values }));
-  };
-
-  // 🔹 Handle image upload preview
-  const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files);
-    setFormData((prev) => ({ ...prev, images: files }));
-    setPreviewImages(files.map((file) => URL.createObjectURL(file)));
-  };
-
-  // 🔹 Handle form submit
+  // 🔹 Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    try {
-      const data = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
-        if (Array.isArray(value)) {
-          value.forEach((v) => data.append(key, v));
-        } else {
-          data.append(key, value);
-        }
-      });
+    // Convert string fields (comma-separated) to arrays
+    const productData = {
+      ...formData,
+      sizes: formData.sizes
+        ? formData.sizes.split(",").map((v) => v.trim())
+        : [],
+      colors: formData.colors
+        ? formData.colors.split(",").map((v) => v.trim())
+        : [],
+      images: formData.images
+        ? formData.images.split(",").map((v) => v.trim())
+        : [],
+    };
 
-      const res = await axios.post("http://localhost:5000/api/products", data, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+    try {
+      const res = await axios.post(
+        "http://localhost:8000/api/product/create-product",
+        productData,
+        { withCredentials: true }
+      );
 
       alert("✅ Product created successfully!");
       console.log(res.data);
 
+      // ✅ Reset all fields after success
       setFormData({
         name: "",
         description: "",
@@ -68,12 +61,11 @@ const CreateProduct = () => {
         discountPrice: "",
         category: "",
         brand: "Culture's",
-        sizes: [],
-        colors: [],
+        sizes: "",
+        colors: "",
         stock: "",
-        images: [],
+        images: "",
       });
-      setPreviewImages([]);
     } catch (error) {
       console.error("❌ Product creation failed:", error);
       alert("Failed to create product");
@@ -84,22 +76,17 @@ const CreateProduct = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar */}
       <Sidebar />
 
-      {/* Main content area */}
       <div className="flex-1 flex flex-col">
-      
-
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 mt-20 lg:mt-8 overflow-y-auto">
+        <main className="flex-1 p-6 lg:p-10 overflow-y-auto">
           <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-md p-6">
             <h1 className="text-2xl font-bold flex items-center gap-2 mb-6">
-              <PlusCircle className="text-blue-600" />
-              Create Product
+              <PlusCircle className="text-blue-600" /> Create Product
             </h1>
 
             <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Product Name */}
+              {/* Name */}
               <div>
                 <label className="block text-sm font-medium mb-1">Name</label>
                 <input
@@ -199,7 +186,9 @@ const CreateProduct = () => {
                   </label>
                   <input
                     type="text"
-                    onChange={(e) => handleArrayChange(e, "sizes")}
+                    name="sizes"
+                    value={formData.sizes}
+                    onChange={handleChange}
                     placeholder="e.g. S, M, L, XL"
                     className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none"
                   />
@@ -210,7 +199,9 @@ const CreateProduct = () => {
                   </label>
                   <input
                     type="text"
-                    onChange={(e) => handleArrayChange(e, "colors")}
+                    name="colors"
+                    value={formData.colors}
+                    onChange={handleChange}
                     placeholder="e.g. Red, Black, White"
                     className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none"
                   />
@@ -230,33 +221,37 @@ const CreateProduct = () => {
                 />
               </div>
 
-              {/* Image Upload */}
+              {/* Image URLs */}
               <div>
                 <label className="block text-sm font-medium mb-1">
-                  Images (Multiple)
+                  Image URLs (comma separated)
                 </label>
-                <div className="flex flex-wrap items-center gap-3">
-                  <label className="flex flex-col items-center justify-center w-40 h-40 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-200 transition">
-                    <Upload className="text-gray-500" size={28} />
-                    <input
-                      type="file"
-                      name="images"
-                      accept="image/*"
-                      multiple
-                      onChange={handleImageUpload}
-                      className="hidden"
-                    />
-                  </label>
-
-                  {previewImages.map((src, i) => (
-                    <img
-                      key={i}
-                      src={src}
-                      alt="preview"
-                      className="w-40 h-40 object-cover rounded-lg border"
-                    />
-                  ))}
+                <div className="flex items-center gap-2">
+                  <ImagePlus className="text-gray-500" />
+                  <input
+                    type="text"
+                    name="images"
+                    value={formData.images}
+                    onChange={handleChange}
+                    placeholder="Paste image links, separated by commas"
+                    className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none"
+                  />
                 </div>
+
+                {formData.images && formData.images.length > 0 && (
+                  <div className="flex flex-wrap gap-3 mt-3">
+                    {formData.images
+                      .split(",")
+                      .map((src, i) => (
+                        <img
+                          key={i}
+                          src={src.trim()}
+                          alt="preview"
+                          className="w-28 h-28 object-cover rounded-lg border"
+                        />
+                      ))}
+                  </div>
+                )}
               </div>
 
               {/* Submit Button */}
@@ -265,7 +260,11 @@ const CreateProduct = () => {
                 disabled={loading}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 transition"
               >
-                {loading ? <Loader2 className="animate-spin" size={20} /> : "Create Product"}
+                {loading ? (
+                  <Loader2 className="animate-spin" size={20} />
+                ) : (
+                  "Create Product"
+                )}
               </button>
             </form>
           </div>

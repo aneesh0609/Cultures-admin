@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import CreateProduct from "../components/CreateProduct";
-// import EditProduct from "../components/EditProduct";
-// import DeleteProduct from "../components/DeleteProduct";
+import ManageProducts from "../components/ManageProducts";
+
 
 const Product = () => {
   const [activeTab, setActiveTab] = useState("create");
@@ -11,10 +11,8 @@ const Product = () => {
     switch (activeTab) {
       case "create":
         return <CreateProduct />;
-      // case "edit":
-      //   return <EditProduct />;
-      // case "delete":
-      //   return <DeleteProduct />;
+      case "Manage":
+        return <ManageProducts />;
       default:
         return <CreateProduct />;
     }
@@ -31,8 +29,7 @@ const Product = () => {
       <div className="flex flex-wrap gap-3 mb-8">
         {[
           { id: "create", label: "➕ Create Product" },
-          { id: "edit", label: "✏️ Edit Product" },
-          { id: "delete", label: "🗑️ Delete Product" },
+          { id: "Manage", label: " Manage Product" },
         ].map((tab) => (
           <button
             key={tab.id}
