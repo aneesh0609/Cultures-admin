@@ -5,10 +5,11 @@ import {
   ShoppingBag,
   Users,
   Settings,
-  LogOut,
   Menu,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Logout from './Logout'
+
 
 const Sidebar = () => {
   const [open, setOpen] = useState(false);
@@ -20,7 +21,7 @@ const Sidebar = () => {
     { icon: <Package size={20} />, label: "Products", path: "/products" },
     { icon: <ShoppingBag size={20} />, label: "Orders", path: "/orders" },
     { icon: <Users size={20} />, label: "Customers", path: "/customers" },
-    { icon: <Settings size={20} />, label: "Settings", path: "/settings" },
+  
   ];
 
   return (
@@ -56,9 +57,8 @@ const Sidebar = () => {
         </nav>
 
         {/* Logout Button */}
-        <button className="flex items-center gap-2 px-3 py-2 hover:bg-gray-800 rounded-md transition">
-          <LogOut size={20} /> Logout
-        </button>
+     
+          <Logout size={20} />
       </aside>
     </>
   );

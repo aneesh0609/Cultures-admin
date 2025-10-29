@@ -42,7 +42,7 @@ const AdminAllOrders = () => {
     switch (status) {
       case "cancelled":
         return "bg-red-50 text-red-700 border-red-200";
-      case "delivered":
+      case "confirmed":
         return "bg-green-50 text-green-700 border-green-200";
       case "processing":
         return "bg-blue-50 text-blue-700 border-blue-200";
