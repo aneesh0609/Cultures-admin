@@ -245,61 +245,93 @@ const AdminUsers = () => {
           </>
         )}
 
-        {/* ✅ Orders Modal */}
+        {/* ✅ Modern & Responsive Orders Modal */}
         {selectedUser && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-50">
-            <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6 relative overflow-y-auto max-h-[80vh]">
+          <div className="fixed inset-0 flex justify-center items-center z-50 backdrop-blur-sm bg-black/40 transition-opacity duration-300">
+            <div className="relative bg-white w-full max-w-lg sm:max-w-xl md:max-w-2xl rounded-2xl shadow-2xl p-6 sm:p-8 overflow-hidden transform transition-all scale-100 animate-fadeIn">
+              {/* Close Button */}
               <button
                 onClick={closeModal}
-                className="absolute top-3 right-3 text-gray-500 hover:text-black"
+                className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition"
               >
-                <X size={20} />
+                <X size={22} />
               </button>
-              <h2 className="text-xl font-semibold mb-2 text-gray-800">
-                {selectedUser.name}'s Orders
-              </h2>
-              <p className="text-sm text-gray-500 mb-4">
-                {selectedUser.email}
-              </p>
 
-              {ordersLoading ? (
-                <p className="text-center text-gray-500">Loading orders...</p>
-              ) : userOrders.length === 0 ? (
-                <p className="text-center text-gray-500">
-                  No orders found for this user.
-                </p>
-              ) : (
-                userOrders.map((order) => (
-                  <div
-                    key={order._id}
-                    className="border rounded-lg p-4 mb-3 hover:shadow-md transition"
-                  >
-                    <p className="text-sm mb-1">
-                      <strong>Order ID:</strong> #{order._id.slice(-6)}
-                    </p>
-                    <p className="text-sm mb-1">
-                      <strong>Status:</strong> {order.status}
-                    </p>
-                    <p className="text-sm mb-1">
-                      <strong>Total:</strong> ₹{order.totalAmount}
-                    </p>
-                    <p className="text-xs text-gray-500 mb-3">
-                      {new Date(order.createdAt).toLocaleString()}
-                    </p>
-                    <h4 className="font-semibold text-sm mb-1">Items:</h4>
-                    <ul className="text-sm divide-y divide-gray-200">
-                      {order.items?.map((item, i) => (
-                        <li key={i} className="flex justify-between py-1">
-                          <span>{item.product?.name || "Product"}</span>
-                          <span>
-                            ₹{item.price} × {item.quantity}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))
-              )}
+              {/* Header */}
+              <div className="mb-5 border-b pb-3">
+                <h2 className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
+                  🛍️ {selectedUser.name}'s Orders
+                </h2>
+                <p className="text-sm text-gray-500">{selectedUser.email}</p>
+              </div>
+
+              {/* Orders Section */}
+              <div className="max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+                {ordersLoading ? (
+                  <p className="text-center text-gray-500 py-6 animate-pulse">
+                    Loading orders...
+                  </p>
+                ) : userOrders.length === 0 ? (
+                  <p className="text-center text-gray-500 py-6">
+                    No orders found for this user.
+                  </p>
+                ) : (
+                  userOrders.map((order) => (
+                    <div
+                      key={order._id}
+                      className="border border-gray-200 rounded-xl p-4 mb-4 bg-gradient-to-br from-white to-slate-50 hover:shadow-md transition-all duration-300"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3">
+                        <h3 className="text-sm font-semibold text-slate-800">
+                          Order #{order._id.slice(-6).toUpperCase()}
+                        </h3>
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-semibold mt-2 sm:mt-0 ${
+                            order.status === "confirmed"
+                              ? "bg-green-100 text-green-700"
+                              : order.status === "Pending"
+                              ? "bg-yellow-100 text-yellow-700"
+                              : "bg-red-100 text-red-700"
+                          }`}
+                        >
+                          {order.status}
+                        </span>
+                      </div>
+
+                      <div className="text-sm text-slate-600 space-y-1 mb-3">
+                        <p>
+                          <strong>Total:</strong> ₹{order.totalAmount}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {new Date(order.createdAt).toLocaleString()}
+                        </p>
+                      </div>
+
+                      {/* Items */}
+                      <div className="bg-slate-50 rounded-lg p-3">
+                        <h4 className="font-medium text-slate-800 text-sm mb-2">
+                          Items:
+                        </h4>
+                        <ul className="divide-y divide-gray-200 text-sm">
+                          {order.items?.map((item, i) => (
+                            <li
+                              key={i}
+                              className="flex justify-between py-2 text-slate-700"
+                            >
+                              <span className="truncate max-w-[60%]">
+                                {item.product?.name || "Product"}
+                              </span>
+                              <span className="font-medium">
+                                ₹{item.price} × {item.quantity}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
           </div>
         )}
