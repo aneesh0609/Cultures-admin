@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import axios from "axios";
 import { PlusCircle, Loader2, ImagePlus } from "lucide-react";
 import Sidebar from "../components/Sidebar";
+import { ToastContainer, toast } from "react-toastify";
 
 const CreateProduct = () => {
   const [loading, setLoading] = useState(false);
+  const [previewImages, setPreviewImages] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -15,45 +17,61 @@ const CreateProduct = () => {
     sizes: "",
     colors: "",
     stock: "",
-    images: "",
+    images: [],
   });
 
-  // 🔹 Handle text input
+  // 🔹 Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 🔹 Submit form
+  // 🔹 Handle image selection
+  const handleImageSelect = (e) => {
+    const files = Array.from(e.target.files);
+    setFormData((prev) => ({ ...prev, images: files }));
+
+    const previews = files.map((file) => URL.createObjectURL(file));
+    setPreviewImages(previews);
+  };
+
+  // 🔹 Submit product
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    // Convert string fields (comma-separated) to arrays
-    const productData = {
-      ...formData,
-      sizes: formData.sizes
-        ? formData.sizes.split(",").map((v) => v.trim())
-        : [],
-      colors: formData.colors
-        ? formData.colors.split(",").map((v) => v.trim())
-        : [],
-      images: formData.images
-        ? formData.images.split(",").map((v) => v.trim())
-        : [],
-    };
-
     try {
+      const data = new FormData();
+
+      data.append("name", formData.name);
+      data.append("description", formData.description);
+      data.append("price", formData.price);
+      data.append("discountPrice", formData.discountPrice);
+      data.append("category", formData.category);
+      data.append("brand", formData.brand);
+      data.append("stock", formData.stock);
+
+      if (formData.sizes)
+        formData.sizes.split(",").forEach((s) => data.append("sizes[]", s.trim()));
+      if (formData.colors)
+        formData.colors.split(",").forEach((c) => data.append("colors[]", c.trim()));
+
+      formData.images.forEach((file) => data.append("images", file));
+
       const res = await axios.post(
         "http://localhost:8000/api/product/create-product",
-        productData,
-        { withCredentials: true }
+        data,
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "multipart/form-data" },
+        }
       );
 
-      alert("✅ Product created successfully!");
-      console.log(res.data);
+      toast.success("✅ Product created successfully!");
 
-      // ✅ Reset all fields after success
+      console.log("Created product:", res.data);
+
+      // Reset form
       setFormData({
         name: "",
         description: "",
@@ -64,11 +82,12 @@ const CreateProduct = () => {
         sizes: "",
         colors: "",
         stock: "",
-        images: "",
+        images: [],
       });
+      setPreviewImages([]);
     } catch (error) {
       console.error("❌ Product creation failed:", error);
-      alert("Failed to create product");
+      toast.error("❌ Failed to create product. Check console for details.");
     } finally {
       setLoading(false);
     }
@@ -86,7 +105,7 @@ const CreateProduct = () => {
             </h1>
 
             <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Name */}
+              {/* Product Name */}
               <div>
                 <label className="block text-sm font-medium mb-1">Name</label>
                 <input
@@ -102,9 +121,7 @@ const CreateProduct = () => {
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-medium mb-1">
-                  Description
-                </label>
+                <label className="block text-sm font-medium mb-1">Description</label>
                 <textarea
                   name="description"
                   value={formData.description}
@@ -118,9 +135,7 @@ const CreateProduct = () => {
               {/* Price & Discount */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Price (₹)
-                  </label>
+                  <label className="block text-sm font-medium mb-1">Price (₹)</label>
                   <input
                     type="number"
                     name="price"
@@ -147,9 +162,7 @@ const CreateProduct = () => {
               {/* Category & Brand */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Category
-                  </label>
+                  <label className="block text-sm font-medium mb-1">Category</label>
                   <select
                     name="category"
                     value={formData.category}
@@ -221,35 +234,33 @@ const CreateProduct = () => {
                 />
               </div>
 
-              {/* Image URLs */}
+              {/* Image Upload */}
               <div>
-                <label className="block text-sm font-medium mb-1">
-                  Image URLs (comma separated)
+                <label className="block text-sm font-medium mb-2">
+                  Upload Product Images
                 </label>
-                <div className="flex items-center gap-2">
-                  <ImagePlus className="text-gray-500" />
+                <label className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg flex items-center gap-2 w-fit">
+                  <ImagePlus size={18} />
+                  Select Images
                   <input
-                    type="text"
-                    name="images"
-                    value={formData.images}
-                    onChange={handleChange}
-                    placeholder="Paste image links, separated by commas"
-                    className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none"
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handleImageSelect}
+                    hidden
                   />
-                </div>
+                </label>
 
-                {formData.images && formData.images.length > 0 && (
-                  <div className="flex flex-wrap gap-3 mt-3">
-                    {formData.images
-                      .split(",")
-                      .map((src, i) => (
-                        <img
-                          key={i}
-                          src={src.trim()}
-                          alt="preview"
-                          className="w-28 h-28 object-cover rounded-lg border"
-                        />
-                      ))}
+                {previewImages.length > 0 && (
+                  <div className="flex flex-wrap gap-3 mt-4">
+                    {previewImages.map((src, i) => (
+                      <img
+                        key={i}
+                        src={src}
+                        alt="preview"
+                        className="w-28 h-28 object-cover rounded-lg border"
+                      />
+                    ))}
                   </div>
                 )}
               </div>
@@ -260,16 +271,15 @@ const CreateProduct = () => {
                 disabled={loading}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 transition"
               >
-                {loading ? (
-                  <Loader2 className="animate-spin" size={20} />
-                ) : (
-                  "Create Product"
-                )}
+                {loading ? <Loader2 className="animate-spin" size={20} /> : "Create Product"}
               </button>
             </form>
           </div>
         </main>
       </div>
+
+      {/* Toast Notifications */}
+      <ToastContainer position="top-right" autoClose={2500} theme="colored" />
     </div>
   );
 };

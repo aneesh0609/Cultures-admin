@@ -92,7 +92,7 @@ const Dashboard = () => {
               <StatCard
                 title="Revenue"
                 value={`₹${revenue.toLocaleString()}`}
-                icon={<DollarSign />}
+                
                 color="border-yellow-500"
               />
               <StatCard
