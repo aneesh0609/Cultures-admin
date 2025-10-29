@@ -29,3 +29,27 @@
 .animate-fadeIn {
   animation: fadeIn 0.25s ease-out forwards;
 }
+
+.fonts{
+  font-family: 'Dancing Script', cursive;
+   /* font-family: 'Britney', cursive; */
+}
+.fontss{
+  /* font-family: 'Dancing Script', cursive; */
+   font-family: 'Britney', cursive; 
+
+ 
+
+}
+
+.panchang{
+     font-family: 'Panchang', sans-serif;
+}
+
+.trench{
+   font-family: 'Trench Slab', sans-serif;
+}
+
+.normal{
+  font-family: 'Clash Grotesk', sans-serif;
+}

@@ -87,8 +87,8 @@ const AdminUsers = () => {
           ☰ Menu
         </button>
 
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">All Users</h1>
-        <p className="text-slate-600 mb-6">
+        <h1 className="text-3xl font-bold text-slate-900 mb-2 panchang">All Users</h1>
+        <p className="text-slate-600 mb-6 normal">
           View user profiles and order history
         </p>
 

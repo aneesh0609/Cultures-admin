@@ -21,7 +21,7 @@ const Product = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8 lg:ml-64 transition-all">
       {/* Header */}
-      <h1 className="text-3xl font-semibold mb-6 text-gray-800">
+      <h1 className="text-3xl font-semibold mb-6 text-gray-800 panchang">
         Product Management
       </h1>
 

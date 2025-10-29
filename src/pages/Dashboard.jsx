@@ -62,12 +62,10 @@ const Dashboard = () => {
         <div className="p-4 sm:p-6 space-y-6">
           {/* Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
+            <h1 className="text-2xl sm:text-2xl font-bold text-slate-900 panchang">
               Dashboard Overview
             </h1>
-            <p className="text-slate-600 text-sm sm:text-base text-center sm:text-right">
-              Insights of users, orders, and overall performance
-            </p>
+         
           </div>
 
           {/* Stats Section */}

@@ -58,11 +58,11 @@ const AdminAllOrders = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="text-center sm:text-left">
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex justify-center sm:justify-start items-center gap-2 sm:gap-3">
-                <ShoppingBag className="w-7 h-7 sm:w-8 sm:h-8 text-indigo-600" />
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex justify-center sm:justify-start items-center gap-2 sm:gap-3 panchang">
+                <ShoppingBag className="w-7 h-7 sm:w-8 sm:h-8 text-indigo-600 " />
                 Order Management
               </h1>
-              <p className="text-gray-600 text-sm sm:text-base mt-1">
+              <p className="text-gray-600 text-sm sm:text-base mt-1 normal">
                 Track and manage all customer orders
               </p>
             </div>
