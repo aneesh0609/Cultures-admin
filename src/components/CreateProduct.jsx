@@ -59,7 +59,7 @@ const CreateProduct = () => {
       formData.images.forEach((file) => data.append("images", file));
 
       const res = await axios.post(
-        "http://localhost:8000/api/product/create-product",
+        import.meta.env.VITE_BACK  + "/api/product/create-product",
         data,
         {
           withCredentials: true,
