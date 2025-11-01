@@ -17,7 +17,7 @@ const ManageProducts = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const res = await axios.get( import.meta.env.VITE_DASH_API + "/api/product/getAll-products", {
+      const res = await axios.get( import.meta.env.VITE_BACK + "/api/product/getAll-products", {
         withCredentials: true,
       });
       if (res.data.success) setProducts(res.data.product);
@@ -44,7 +44,7 @@ const ManageProducts = () => {
 
     const toastId = toast.loading("Deleting product...");
     try {
-      const res = await axios.delete( import.meta.env.VITE_DASH_API + "/api/product/delete-products", {
+      const res = await axios.delete( import.meta.env.VITE_BACK+ "/api/product/delete-products", {
         data: { productId: id },
         withCredentials: true,
       });
@@ -101,7 +101,7 @@ const ManageProducts = () => {
       data.append("stock", formData.stock);
       if (formData.newImage) data.append("images", formData.newImage);
 
-      const res = await axios.put( import.meta.env.VITE_DASH_API + "/api/product/update-products", data, {
+      const res = await axios.put( import.meta.env.VITE_BACK + "/api/product/update-products", data, {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" },
       });
