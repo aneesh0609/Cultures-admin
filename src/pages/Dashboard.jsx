@@ -52,7 +52,7 @@ const Dashboard = () => {
     .slice(0, 5);
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-gradient-to-l from-slate-50 to-slate-100">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-gradient-to-l from-slate-100 to-slate-200">
       {/* Sidebar */}
       <Sidebar />
 
